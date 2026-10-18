@@ -468,6 +468,21 @@
     }
 
     comboText.textContent = 'なでなで ' + clickCount + '回';
+
+    // Win the instant the gauge reaches 100% -- do NOT wait for the next
+    // tick() frame to notice. tick() always applies decay before checking
+    // affection >= 100, and affection is hard-capped at 100 here, so that
+    // check could never pass on its own: the very first decay step after
+    // hitting 100 pulls it back under before anything looks at it. Checking
+    // right here, right after the gain that reached 100, is what actually
+    // lets the player win.
+    if(running && affection >= 100){
+      // startTime is set by the first rAF callback in startGame(); guard
+      // against the (practically unreachable, but cheap to guard) case of
+      // winning before that first frame has fired.
+      const elapsed = startTime ? (performance.now() - startTime) / 1000 : 0;
+      finishGame(elapsed);
+    }
   }
 
   function startGame(){
