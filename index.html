@@ -423,11 +423,11 @@
     if(!lastDecayTime) lastDecayTime = ts;
     const dt = ts - lastDecayTime;
     if(dt > 0){
-      // Gentle, constant decay. Earlier this ramped from 6%/s up to 12%/s,
-      // which required sustained tapping faster than ~2 taps/sec just to
-      // break even -- effectively unwinnable at a normal pace. A flat,
-      // low decay means any steady petting makes real progress.
-      const decayRate = 2.5; // %/sec
+      // Flat decay. Tuned (with gain below) so a real, sustained effort of
+      // ~2.5 taps/sec clears in about 20s, normal-paced tapping (~2/sec)
+      // takes ~28s, and even a slow, relaxed pace (~1/sec) still finishes
+      // (~80s) rather than stalling forever.
+      const decayRate = 1.25; // %/sec
       affection -= decayRate * (dt/1000);
       if(affection < 0) affection = 0;
       lastDecayTime = ts;
@@ -444,7 +444,7 @@
   function pet(e){
     if(!running) return;
     clickCount++;
-    affection += 7 + Math.random()*4; // 7-11% per pet, avg 9%
+    affection += 2 + Math.random(); // 2-3% per pet, avg 2.5%
     if(affection > 100) affection = 100;
     updateMeter();
 
